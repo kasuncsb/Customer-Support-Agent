@@ -2,7 +2,7 @@
   <img src="assets/animated-orb.svg" width="160" height="160" alt="Animated orb logo" />
   <h1>Customer Support Agent</h1>
   <p><strong>LankaTel AI Support Assistant</strong></p>
-  <p>RAG-first support with voice, actions, and a modern UI.</p>
+  <p>RAG-first support with voice, agentic actions, and a modern UI.</p>
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+" /></a>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
@@ -10,212 +10,171 @@
   </p>
 </div>
 
-A RAG-based AI customer support agent built with Azure OpenAI and ChromaDB. It includes a FastAPI backend, a Next.js UI, and chat + voice workflows with agentic account actions.
+A RAG-based AI customer support agent for LankaTel — a conceptual ISP in Sri Lanka. Built with Azure OpenAI and ChromaDB, it ships a FastAPI backend, a Next.js UI, and voice + agentic account workflows out of the box.
 
-## Scenario
-
-LankaTel is a conceptual internet service provider in Sri Lanka. This project is its AI support product: a complete customer support stack with a RAG knowledge brain, action-ready backend, and a modern UI. It ships with realistic telecom knowledge, supports chat and voice, and can handle guided workflows like ticket creation or service changes. Use it as a drop-in reference only.
+---
 
 ## Features
 
-- Retrieval-augmented generation with source citations
-- Azure OpenAI chat and embedding deployments
-- ChromaDB local vector store with persistence
-- Token-aware chunking with tiktoken
-- CLI for ingest, query, chat, voice, and realtime voice
-- FastAPI backend API for the UI and external clients
-- Next.js UI with chat, voice, tools, and admin console
-- Agentic actions (tickets, subscriptions, balance) backed by MySQL
-- OTP verification with a shared session across chat + voice
-- Quick actions panel in chat and voice once verified
-- Voice UI (browser STT + backend Azure TTS) and realtime CLI voice (Azure Speech)
-- Single-container Docker image with nginx reverse proxy
+- **RAG with citations** — retrieves relevant chunks and surfaces source references
+- **Agentic account actions** — ticket creation, subscription changes, and balance queries backed by MySQL
+- **OTP verification** — mobile OTP shared across chat and voice sessions; unlocks a quick-actions panel
+- **Voice modes** — browser STT + Azure TTS in the UI; full-duplex realtime voice in the CLI
+- **Admin console** — JWT-protected management UI
+- **Single-container deploy** — Docker image with nginx reverse-proxying both the Next.js app and the Python API
+
+---
 
 ## Tech Stack
 
-### AI & RAG
-- Azure OpenAI (GPT-4o-mini, text-embedding-3-large)
-- ChromaDB vector store
-- tiktoken for chunking
+| Layer | Technology |
+|---|---|
+| **AI / RAG** | Azure OpenAI (GPT-4o-mini, text-embedding-3-large), ChromaDB, tiktoken |
+| **Backend** | Python 3.10+, FastAPI, Uvicorn, Pydantic v2, SQLAlchemy + PyMySQL |
+| **Frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS |
+| **Database** | MySQL 8.x |
+| **Voice** | Browser Web Speech API (STT), Azure Speech Services (TTS + realtime STT/TTS) |
+| **Email** | Zoho Mail SMTP (OTP / notifications) |
+| **Ops** | Docker + nginx, pytest, ESLint, Prettier |
 
-### Backend
-- Python 3.10+, FastAPI, Uvicorn
-- Pydantic v2 for validation
-- SQLAlchemy + PyMySQL for DB access
-
-### Frontend
-- Next.js 16, React 19, TypeScript
-- Tailwind CSS, PostCSS
-
-### Data & Storage
-- MySQL 8.x (actions, sessions, admin data)
-
-### Voice
-- Browser Web Speech API (UI STT)
-- Azure Speech Services (backend TTS + CLI realtime STT/TTS)
-
-### Email & Security
-- Zoho Mail SMTP for OTP/notifications
-- Cloudflare as DNS provider and security layer
-
-### Dev & Ops
-- Docker + nginx (single-container)
-- pytest, ESLint, Prettier
+---
 
 ## Architecture
 
 ```
-[Next.js UI] --> /api --> [FastAPI backend]
-                        |-> [RAG pipeline] -> [ChromaDB]
-                        |-> [Azure OpenAI]
-                        |-> [MySQL] (actions, sessions, admin)
-                        |-> [Azure Speech] (voice + TTS)
+[Next.js UI] ──/api──► [FastAPI backend]
+                              ├── [RAG pipeline] ──► [ChromaDB]
+                              ├── [Azure OpenAI]
+                              ├── [MySQL]  (actions, sessions, admin)
+                              └── [Azure Speech]  (voice + TTS)
 ```
+
+---
 
 ## Project Structure
 
 ```
 Customer-Support-Agent/
-  api_server.py              # FastAPI backend
-  src/                       # Core pipeline, services, realtime voice
-  ui/                        # Next.js frontend
+  api_server.py          # FastAPI backend entry point
+  src/                   # Core pipeline, services, realtime voice
+  ui/                    # Next.js frontend
   data/
-    raw/                     # Raw JSONL knowledge files
-    processed/               # Generated KB (gitignored)
-  db/                        # MySQL schema + seed data
-  docker/                    # Nginx + container entrypoint
-  scripts/                   # Utilities (KB build, quota check)
-  tests/                     # Pytest suite
-  vectorstore/               # ChromaDB persistence (gitignored)
+    raw/                 # Raw JSONL knowledge files
+    processed/           # Generated KB (gitignored)
+  db/                    # MySQL schema + seed data
+  docker/                # nginx config + container entrypoint
+  scripts/               # Utilities (KB build, quota check)
+  tests/                 # pytest suite
+  vectorstore/           # ChromaDB persistence (gitignored)
 ```
+
+---
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 18+ (for the UI)
-- Azure OpenAI deployments:
-  - `chat-model` (GPT-4o-mini)
-  - `embedding-model` (text-embedding-3-large)
-- Optional: MySQL 8.x for actions/admin data
-- Optional: Azure Speech for voice features
+- Node.js 18+
+- Azure OpenAI deployments: `chat-model` (GPT-4o-mini) and `embedding-model` (text-embedding-3-large)
+- MySQL 8.x _(optional — required for account actions and admin console)_
+- Azure Speech Services _(optional — required for voice features)_
 
-### Installation
+### 1. Backend setup
 
-1. Create a virtual environment
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+python -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-2. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
+cp .env.example .env              # fill in your Azure OpenAI credentials
+python -m src.cli test            # verify configuration
+```
 
-3. Configure environment
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Azure OpenAI credentials
-   ```
+### 2. Database setup (optional)
 
-4. (Optional) Initialize MySQL data
-   ```bash
-   mysql -u root -p < db/mysql_schema.sql
-   ```
-   This creates the `lankatel_demo` database. Point `DB_URL` to it in `.env`.
+```bash
+mysql -u root -p < db/mysql_schema.sql
+# Set DB_URL in .env to: mysql+pymysql://user:password@localhost/ltagent
+```
 
-5. Test configuration
-   ```bash
-   python -m src.cli test
-   ```
+### 3. Ingest knowledge base
 
-### Basic Usage
+```bash
+python -m src.cli ingest data/raw/lankatel   # bundled Lankatel data
+python -m src.cli ingest data/documents/ --recursive   # custom documents
+```
 
-1. Ingest documents
-   ```bash
-   # Ingest the bundled Lankatel data (auto-builds a processed KB)
-   python -m src.cli ingest data/raw/lankatel
+### 4. Frontend setup
 
-   # Ingest a directory of documents
-   python -m src.cli ingest data/documents/ --recursive
-   ```
+```bash
+cd ui
+cp .env.example .env.local        # default: BACKEND_URL=http://localhost:8000
+npm install
+```
 
-2. Ask questions
-   ```bash
-   python -m src.cli query "How do I reset my password?"
-   python -m src.cli query "What is my plan balance?" --stream
-   ```
+### 5. Run
 
-3. Interactive chat
-   ```bash
-   python -m src.cli chat
-   ```
+```bash
+# Terminal 1 — backend
+python api_server.py
 
-4. Voice modes (optional)
-   ```bash
-   python -m src.cli voice-chat
-   python -m src.cli realtime
-   ```
+# Terminal 2 — frontend
+cd ui && npm run dev
+```
 
-## Run the API Server and UI
+- UI: `http://localhost:3000`
+- API: `http://localhost:8000`
 
-1. Start the backend
-   ```bash
-   python api_server.py
-   ```
-
-2. Start the UI
-   ```bash
-   cd ui
-   cp .env.example .env.local
-   npm install
-   npm run dev
-   ```
-
-The UI will be available at `http://localhost:3000` and the backend at `http://localhost:8000`.
-
-## Verification & Agentic Actions
-
-- Account actions require OTP verification (mobile number → code).
-- A verified session is shared across chat and voice in the UI.
-- Once verified, a quick actions panel appears with account shortcuts.
-- Action execution is done on non-streaming chat responses to keep tool calls deterministic.
-
-## Voice Modes
-
-### UI Voice (Web)
-- **STT:** Browser Web Speech API
-- **TTS:** Backend `/api/tts` (Azure Speech)
-- Supports agentic actions and OTP verification via voice
-
-### CLI Voice
-- `voice-chat`: turn-based speech with Azure Speech
-- `realtime`: low-latency full-duplex voice with barge-in
+---
 
 ## CLI Reference
 
+```bash
+python -m src.cli <command>
+```
+
 | Command | Description |
-|---------|-------------|
-| `ingest <path>` | Ingest documents from file or directory |
+|---|---|
+| `ingest <path>` | Ingest documents from a file or directory |
 | `query <question>` | Ask a single question |
-| `chat` | Start interactive chat session |
-| `voice-chat` | Start turn-based voice chat |
-| `realtime` | Start realtime full-duplex voice chat |
+| `chat` | Interactive chat session |
+| `voice-chat` | Turn-based voice chat (Azure Speech) |
+| `realtime` | Full-duplex realtime voice chat |
 | `stats` | Show system statistics |
-| `test` | Test system configuration |
+| `test` | Verify system configuration |
 | `clear` | Clear the vector store |
+
+---
+
+## Voice Modes
+
+**UI voice** — uses the browser Web Speech API for STT and the backend `/api/tts` endpoint (Azure Speech) for TTS. Supports OTP verification and agentic actions by voice.
+
+**CLI voice-chat** — turn-based speech via Azure Speech SDK.
+
+**CLI realtime** — low-latency full-duplex voice with barge-in support.
+
+---
+
+## Verification & Agentic Actions
+
+Account actions (ticket creation, subscription changes, balance queries) require OTP verification:
+
+1. Enter your mobile number in the chat or voice UI.
+2. Enter the OTP received via SMS.
+3. A verified session is shared across chat and voice — a quick-actions panel appears once verified.
+4. Actions run on non-streaming responses to keep tool calls deterministic.
+
+---
 
 ## Data Formats
 
-Supported input formats:
-
-| Format | Extension | Description |
-|--------|-----------|-------------|
-| Text | `.txt` | Plain text files |
+| Format | Extension | Notes |
+|---|---|---|
+| Text | `.txt` | Plain text |
 | Markdown | `.md` | Markdown documents |
-| JSON | `.json` | JSON with `text` or `content` field |
+| JSON | `.json` | Object with `text` or `content` field |
 | JSON Lines | `.jsonl` | One JSON object per line |
 
 JSONL example:
@@ -225,20 +184,22 @@ JSONL example:
 {"id": "faq_002", "question": "What payment methods?", "answer": "We accept Visa, MasterCard...", "category": "billing"}
 ```
 
-To normalize the bundled Lankatel data manually:
+To rebuild the processed Lankatel KB manually:
 
 ```bash
 python scripts/build_processed_kb.py
 ```
 
+---
+
 ## Configuration
 
-All configuration is done via environment variables. See `.env.example` and `ui/.env.example` for the full list. Common settings:
+All settings are controlled by environment variables. Copy `.env.example` to `.env` (backend) and `ui/.env.example` to `ui/.env.local` (frontend). Key variables:
 
 ```bash
-# Azure OpenAI
-AZURE_OPENAI_API_KEY=...
-AZURE_OPENAI_ENDPOINT=...
+# Azure OpenAI (required)
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_ENDPOINT=
 AZURE_OPENAI_CHAT_DEPLOYMENT=chat-model
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=embedding-model
 
@@ -246,19 +207,20 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT=embedding-model
 VECTORSTORE_DIR=./vectorstore
 VECTORSTORE_COLLECTION=support_docs
 
-# Optional services
-DB_URL=mysql+pymysql://user:password@localhost/lankatel_demo
-AZURE_SPEECH_API_KEY=...
+# Database (optional)
+DB_URL=mysql+pymysql://user:password@localhost/ltagent
+
+# Voice (optional)
+AZURE_SPEECH_API_KEY=
 AZURE_SPEECH_REGION=eastus
 
-# Email (Zoho SMTP)
-EMAIL_ENABLED=true
+# Email / OTP (optional)
+EMAIL_ENABLED=false
 EMAIL_SMTP_HOST=smtp.zoho.com
 EMAIL_SMTP_PORT=587
-EMAIL_SMTP_USERNAME=...
-EMAIL_SMTP_PASSWORD=...
-EMAIL_SENDER=...
-EMAIL_USE_TLS=true
+EMAIL_SMTP_USERNAME=
+EMAIL_SMTP_PASSWORD=
+EMAIL_SENDER=
 
 # Admin console
 ADMIN_USERNAME=ltadmin
@@ -266,7 +228,7 @@ ADMIN_PASSWORD=change_me_strong
 ADMIN_SECRET=change_me_secret
 ```
 
-Cloudflare is used at the DNS and security layer during deployment; no app-level configuration is required.
+---
 
 ## Testing
 
@@ -274,35 +236,31 @@ Cloudflare is used at the DNS and security layer during deployment; no app-level
 pytest tests/ -v
 ```
 
-## Docker (Single-container frontend + backend)
+---
 
-This repository includes a `Dockerfile` that builds the Next.js UI and packages the Python backend into a single container. Nginx is used inside the container to reverse-proxy:
+## Docker
 
-- Requests under `/api/` are forwarded to the Python backend (uvicorn) on port `8000`
-- All other requests are forwarded to the Next.js server on port `3000`
-
-Build and run locally:
+Builds the Next.js UI and packages the Python backend into a single image. nginx reverse-proxies `/api/*` to uvicorn on port 8000 and everything else to Next.js on port 3000.
 
 ```bash
 docker build -t customer-support-agent:latest .
 docker run -p 80:80 customer-support-agent:latest
 ```
 
-Notes on Azure deployment:
+**Azure deployment:** push the image to ACR or Docker Hub, then point an Azure Web App for Containers or Azure Container Instance at it. The container exposes port 80 via nginx, which is what Azure expects.
 
-- Push the image to a container registry (ACR or Docker Hub) and point your Azure Web App for Containers or Azure Container Instance to the image.
-- Azure expects a single HTTP port (80) to be served by the container; the image exposes port 80 and uses nginx as the entrypoint.
+---
 
 ## Contributing
 
-Contributions are welcome. Please open a PR with a clear description of the change.
+Open a PR with a clear description of the change.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
 
 ## Acknowledgments
 
-- LangChain for RAG patterns
-- ChromaDB for vector storage
-- Azure OpenAI for LLMs and embeddings
+- [LangChain](https://github.com/langchain-ai/langchain) for RAG patterns
+- [ChromaDB](https://www.trychroma.com/) for vector storage
+- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) for LLMs and embeddings
