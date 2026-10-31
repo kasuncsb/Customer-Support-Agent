@@ -120,7 +120,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               </button>
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
-                href="/"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/`}
                 className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium transition-colors"
                 style={{
                   backgroundColor: 'white',

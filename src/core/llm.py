@@ -245,10 +245,8 @@ class AzureLLMProvider(LLMProvider):
         # Prepare request body with all parameters for natural responses
         body = {
             "messages": [m.to_dict() for m in messages],
-            "temperature": temperature if temperature is not None else self.temperature,
-            "max_tokens": max_tokens if max_tokens is not None else self.max_tokens,
-            "presence_penalty": presence_penalty if presence_penalty is not None else self.presence_penalty,
-            "frequency_penalty": frequency_penalty if frequency_penalty is not None else self.frequency_penalty
+            "max_completion_tokens": max_tokens if max_tokens is not None else self.max_tokens,
+            "reasoning_effort": "low",
         }
         
         last_exception = None
@@ -319,10 +317,8 @@ class AzureLLMProvider(LLMProvider):
         # Prepare request body with streaming enabled and natural response params
         body = {
             "messages": [m.to_dict() for m in messages],
-            "temperature": temperature if temperature is not None else self.temperature,
-            "max_tokens": max_tokens if max_tokens is not None else self.max_tokens,
-            "presence_penalty": presence_penalty if presence_penalty is not None else self.presence_penalty,
-            "frequency_penalty": frequency_penalty if frequency_penalty is not None else self.frequency_penalty,
+            "max_completion_tokens": max_tokens if max_tokens is not None else self.max_tokens,
+            "reasoning_effort": "low",
             "stream": True
         }
         

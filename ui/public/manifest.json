@@ -2,13 +2,13 @@
   "name": "LankaTel AI Assistant",
   "short_name": "LankaTel AI",
   "description": "Your intelligent LankaTel customer support assistant - Rashmi",
-  "start_url": "/",
+  "start_url": "/customer-support-agent/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/customer-support-agent/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

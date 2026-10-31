@@ -769,7 +769,7 @@ function VoicePageContent() {
         }
 
         // Fetch TTS audio from backend
-        const response = await fetch('/api/tts', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/tts`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text }),
@@ -988,7 +988,7 @@ function VoicePageContent() {
       queryAbortRef.current = controller;
 
       // Query backend chat (non-stream) to allow ACTION execution; include bearer if available
-      const resp = await fetch('/api/chat', {
+      const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

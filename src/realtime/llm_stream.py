@@ -50,7 +50,7 @@ class Message:
 class GenerationConfig:
     """Configuration for LLM generation."""
     temperature: float = 0.7
-    max_tokens: int = 300
+    max_tokens: int = 1024
     presence_penalty: float = 0.1
     frequency_penalty: float = 0.1
     top_p: float = 0.95
@@ -62,7 +62,7 @@ class GenerationConfig:
     short_response_triggers: List[str] = field(
         default_factory=lambda: ["yes", "no", "thanks", "ok", "sure", "hi", "hello"]
     )
-    short_response_max_tokens: int = 80
+    short_response_max_tokens: int = 512
 
 
 @dataclass
@@ -195,11 +195,8 @@ class AsyncLLMStream:
 
         body = {
             "messages": [m.to_dict() for m in messages],
-            "temperature": temperature or self._config.temperature,
-            "max_tokens": max_tokens,
-            "presence_penalty": self._config.presence_penalty,
-            "frequency_penalty": self._config.frequency_penalty,
-            "top_p": self._config.top_p,
+            "max_completion_tokens": max_tokens,
+            "reasoning_effort": "low",
             "stream": True,
         }
 
@@ -302,7 +299,7 @@ class AsyncLLMStream:
 
         # Short queries
         if word_count <= 10:
-            return min(self._config.max_tokens, 200)
+            return min(self._config.max_tokens, 512)
 
         return self._config.max_tokens
 

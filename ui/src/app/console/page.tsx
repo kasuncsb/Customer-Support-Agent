@@ -39,7 +39,7 @@ async function apiFetch(
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const resp = await fetch(path, {
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${path}`, {
     ...options,
     headers,
   });

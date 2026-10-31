@@ -117,7 +117,7 @@ class VoiceErrorBoundary extends Component<VoiceErrorBoundaryProps, VoiceErrorBo
         break;
       case 'text':
         // Navigate to text chat
-        window.location.href = '/';
+        window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/`;
         break;
     }
   };

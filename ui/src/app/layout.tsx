@@ -15,17 +15,19 @@ export const viewport: Viewport = {
   themeColor: '#2563eb',
 };
 
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 export const metadata: Metadata = {
   title: 'LankaTel AI Assistant',
   description: 'Your intelligent LankaTel customer support assistant - get instant help with your mobile, broadband, and billing queries',
   keywords: ['LankaTel', 'customer support', 'AI assistant', 'Rashmi', 'telecom', 'Sri Lanka'],
   authors: [{ name: 'LankaTel' }],
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/apple-touch-icon.png',
+    icon: `${BASE_PATH}/favicon.svg`,
+    shortcut: `${BASE_PATH}/favicon.svg`,
+    apple: `${BASE_PATH}/apple-touch-icon.png`,
   },
-  manifest: '/manifest.json',
+  manifest: `${BASE_PATH}/manifest.json`,
   openGraph: {
     title: 'LankaTel AI Assistant',
     description: 'Your intelligent LankaTel customer support assistant',

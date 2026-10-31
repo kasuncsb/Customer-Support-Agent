@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Served under a subpath (build-time). Empty = served at root.
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+
   // Headers for streaming support
   async headers() {
     return [

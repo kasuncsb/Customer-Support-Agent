@@ -56,7 +56,7 @@ class ControllerConfig:
     target_first_response_ms: int = 500
 
     # Generation
-    max_response_tokens: int = 300
+    max_response_tokens: int = 1024
 
     # Timeouts
     no_speech_timeout_s: float = 30.0
