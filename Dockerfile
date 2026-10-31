@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile that builds the Next.js frontend and packages
 # the Python backend, runs both, and uses nginx as reverse proxy on port 80.
 
-FROM node:20-bullseye AS frontend_build
+FROM node:26-bookworm AS frontend_build
 WORKDIR /app/ui
 COPY ui/package*.json ./
 COPY ui/next.config.js ./
@@ -9,7 +9,7 @@ COPY ui/tsconfig.json ./
 COPY ui/ .
 RUN npm ci --silent && npm run build
 
-FROM node:20-bookworm-slim AS final
+FROM node:26-bookworm-slim AS final
 RUN apt-get update && apt-get install -y --no-install-recommends \
   python3 python3-pip nginx ca-certificates curl build-essential \
   libsqlite3-0 libsqlite3-dev sqlite3 \
